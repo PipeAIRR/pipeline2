@@ -21,11 +21,14 @@ Each 250 base-pair read was sequenced from one end of the target cDNA, so that t
 <u>Sequence processing:</u>
 
 * Paired-end assembly
+
 	1. AssemblePairs align
 * Quality control and primer annotation
+
 	2. FilterSeq quality
 	2. MaskPrimer score
 * Deduplication and filtering
+
 	3. CollapseSeq
 	4. SplitSeq group
 
