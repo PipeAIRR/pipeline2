@@ -7,8 +7,8 @@ params.outdir = 'results'
 
 //* params.edit_assemble_pairs_params =  "no"  //* @dropdown @options:"yes","no" @show_settings:"assemble_pairs,parse_log_AP"
 //* params.edit_filter_quality_params =  "no"  //* @dropdown @options:"yes","no"  @show_settings:"filter_seq"
-//* params.edit_mask_primer_params_v =  "no"  //* @dropdown @options:"yes","no" @show_settings:"MaskPrimers"
-//* params.edit_mask_primer_params_c =  "no"  //* @dropdown @options:"yes","no" @show_settings:"MaskPrimers"
+//* params.edit_mask_primer_v_params =  "no"  //* @dropdown @options:"yes","no" @show_settings:"MaskPrimers"
+//* params.edit_mask_primer_c_params =  "no"  //* @dropdown @options:"yes","no" @show_settings:"MaskPrimers"
 //* params.edit_collapse_seq_params =  "no"   //* @dropdown @options:"yes","no" @show_settings:"collapse_seq"
 //* params.edit_split_seq_params =  "no"   //* @dropdown @options:"yes","no" @show_settings:"split_seq"
 //* params.edit_parse_header_table =  "no"   //* @dropdown @options:"yes","no" @show_settings:"parse_headers" @description:"If edit true, then parametrs in the parse_header_table tab should be edited"
@@ -32,7 +32,9 @@ if ($HOSTNAME == "ig03.lnx.biu.ac.il"){
 
 //* autofill
 
-if((params.edit_assemble_pairs_params && (params.edit_assemble_pairs_params == "no"))){
+
+
+if(params.edit_assemble_pairs_params == "no"){
 
     // Process Parameters for params.Assemble_pairs_assemble_pairs:
     params.Assemble_pairs_assemble_pairs.method = "align"
@@ -53,11 +55,12 @@ if((params.edit_assemble_pairs_params && (params.edit_assemble_pairs_params == "
     params.Assemble_pairs_assemble_pairs.maxhits = 100
     params.Assemble_pairs_assemble_pairs.fill = "false"
     params.Assemble_pairs_assemble_pairs.gap = 0
+    params.Assemble_pairs_assemble_pairs.assemble_reference = ''
     params.Assemble_pairs_parse_log_AP.field_to_parse = "ID LENGTH OVERLAP ERROR PVALUE"
 }
 
 
-if((params.edit_filter_quality_params && (params.edit_filter_quality_params == "no"))){
+if(params.edit_filter_quality_params == "no"){
 
     // Process Parameters for params.Filter_Sequence_Quality_filter_seq_quality:
     params.Filter_Sequence_Quality_filter_seq_quality.method = "quality"
@@ -66,35 +69,37 @@ if((params.edit_filter_quality_params && (params.edit_filter_quality_params == "
 
 }
 
-if((params.edit_mask_primer_params_v && (params.edit_mask_primer_params_v == "no"))){
-    // Process Parameters for Mask_Primer_MaskPrimers:
-    params.Mask_Primer_MaskPrimers.method = "score"
-    params.Mask_Primer_MaskPrimers.mode = "mask"
-    params.Mask_Primer_MaskPrimers.primer_field = "VPRIMER"
-    params.Mask_Primer_MaskPrimers.barcode_field = ""
-    params.Mask_Primer_MaskPrimers.start = 4
-    params.Mask_Primer_MaskPrimers.barcode = "false"
-    params.Mask_Primer_MaskPrimers.umi_length = 0
-    params.Mask_Primer_MaskPrimers.maxerror = 0.2
-    params.Mask_Primer_MaskPrimers.revpr = "false"
-    params.Mask_Primer_MaskPrimers.failed = "false"
+if(params.edit_mask_primer_v_params == "no"){
+    // Process Parameters for Mask_Primer_v_MaskPrimers:
+    params.Mask_Primer_v_MaskPrimers.method = "score"
+    params.Mask_Primer_v_MaskPrimers.mode = "mask"
+    params.Mask_Primer_v_MaskPrimers.primer_field = "VPRIMER"
+    params.Mask_Primer_v_MaskPrimers.barcode_field = ""
+    params.Mask_Primer_v_MaskPrimers.start = 4
+    params.Mask_Primer_v_MaskPrimers.barcode = "false"
+    params.Mask_Primer_v_MaskPrimers.umi_length = 0
+    params.Mask_Primer_v_MaskPrimers.maxerror = 0.2
+    params.Mask_Primer_v_MaskPrimers.revpr = "false"
+    params.Mask_Primer_v_MaskPrimers.failed = "false"
+    params.Mask_Primer_v_MaskPrimers.R1_primers = "${projectDir}/primers/Greiff2014_VPrimers.fasta"
 }
 
-if((params.edit_mask_primer_params_c && (params.edit_mask_primer_params_c == "no"))){
-    // Process Parameters for Mask_Primer_MaskPrimers:
-    params.Mask_Primer_MaskPrimers.method = "score"
-    params.Mask_Primer_MaskPrimers.mode = "cut"
-    params.Mask_Primer_MaskPrimers.primer_field = "CPRIMER"
-    params.Mask_Primer_MaskPrimers.barcode_field = ""
-    params.Mask_Primer_MaskPrimers.start = 4
-    params.Mask_Primer_MaskPrimers.barcode = "false"
-    params.Mask_Primer_MaskPrimers.umi_length = 0
-    params.Mask_Primer_MaskPrimers.maxerror = 0.2
-    params.Mask_Primer_MaskPrimers.revpr = "true"
-    params.Mask_Primer_MaskPrimers.failed = "false"
+if(params.edit_mask_primer_c_params == "no"){
+    // Process Parameters for Mask_Primer_c_MaskPrimers:
+    params.Mask_Primer_c_MaskPrimers.method = "score"
+    params.Mask_Primer_c_MaskPrimers.mode = "cut"
+    params.Mask_Primer_c_MaskPrimers.primer_field = "CPRIMER"
+    params.Mask_Primer_c_MaskPrimers.barcode_field = ""
+    params.Mask_Primer_c_MaskPrimers.start = 4
+    params.Mask_Primer_c_MaskPrimers.barcode = "false"
+    params.Mask_Primer_c_MaskPrimers.umi_length = 0
+    params.Mask_Primer_c_MaskPrimers.maxerror = 0.2
+    params.Mask_Primer_c_MaskPrimers.revpr = "true"
+    params.Mask_Primer_c_MaskPrimers.failed = "false"
+    params.Mask_Primer_c_MaskPrimers.R1_primers = "${projectDir}/primers/Greiff2014_CPrimers.fasta"
 }
 
-if((params.edit_collapse_seq_params && (params.edit_collapse_seq_params == "no"))){
+if(params.edit_collapse_seq_params == "no"){
     // Process Parameters for params.edit_collapse_seq_params:
     params.collapse_sequences_collapse_seq.act = "set"
     params.collapse_sequences_collapse_seq.max_missing = 20
@@ -104,13 +109,13 @@ if((params.edit_collapse_seq_params && (params.edit_collapse_seq_params == "no")
     params.collapse_sequences_collapse_seq.nproc = params.nproc
 }
 
-if((params.edit_split_seq_params && (params.edit_split_seq_params == "no"))){
+if(params.edit_split_seq_params == "no"){
     // Process Parameters for params.Parse_header_parse_headers:
     params.split_sequences_split_seq.field = "DUPCOUNT"
     params.split_sequences_split_seq.num = 2
 }
 
-if((params.edit_parse_header_table && (params.edit_parse_header_table == "no"))){
+if(params.edit_parse_header_table == "no"){
     // Process Parameters for params.Parse_header_table_parse_headers:
     params.Parse_header_table_parse_headers.method = "table"
     params.Parse_header_table_parse_headers.act = ""
@@ -120,12 +125,7 @@ if((params.edit_parse_header_table && (params.edit_parse_header_table == "no")))
 
 if (!params.reads){params.reads = ""} 
 if (!params.mate){params.mate = ""} 
-if (!params.C_primer_file){params.C_primer_file = ""} 
-if (!params.V_primer_file){params.V_primer_file = ""} 
 if (!params.mate_ap){params.mate_ap = ""} 
-// Stage empty file to be used as an optional input where required
-ch_empty_file_1 = file("$baseDir/.emptyfiles/NO_FILE_1", hidden:true)
-ch_empty_file_2 = file("$baseDir/.emptyfiles/NO_FILE_2", hidden:true)
 
 if (params.reads){
 Channel
@@ -136,24 +136,21 @@ Channel
 	g_2_reads_g36_12 = Channel.empty()
  }
 
-Channel.value(params.mate).into{g_3_mate_g0_0;g_3_mate_g0_5;g_3_mate_g38_9;g_3_mate_g38_11;g_3_mate_g36_15;g_3_mate_g36_12;g_3_mate_g41_9;g_3_mate_g41_11}
-g_6_R1_primers_g41_11 = params.C_primer_file && file(params.C_primer_file, type: 'any').exists() ? file(params.C_primer_file, type: 'any') : ch_empty_file_1
-g_7_R1_primers_g38_11 = params.V_primer_file && file(params.V_primer_file, type: 'any').exists() ? file(params.V_primer_file, type: 'any') : ch_empty_file_1
-Channel.value(params.mate_ap).into{g_39_mate_g36_15;g_39_mate_g36_12}
+Channel.value(params.mate).into{g_3_mate_g0_7;g_3_mate_g0_5;g_3_mate_g0_0;g_3_mate_g36_15;g_3_mate_g36_19;g_3_mate_g36_12;g_3_mate_g22_16;g_3_mate_g26_20;g_3_mate_g28_15;g_3_mate_g38_9;g_3_mate_g38_12;g_3_mate_g38_11;g_3_mate_g47_9;g_3_mate_g47_12;g_3_mate_g47_11}
+Channel.value(params.mate_ap).into{g_39_mate_g36_15;g_39_mate_g36_19;g_39_mate_g36_12}
 
 
 process Assemble_pairs_assemble_pairs {
 
-publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /AP_.*$/) "AP_log_table/$filename"}
-publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_assemble-fail.f.*$/) "outputparam/$filename"}
 input:
  set val(name),file(reads) from g_2_reads_g36_12
  val mate from g_39_mate_g36_12
 
 output:
  set val(name),file("*_assemble-pass.f*")  into g36_12_reads0_g0_0
- file "AP_*"  into g36_12_logFile1_g36_15
+ set val(name),file("AP_*")  into g36_12_logFile1_g36_15
  set val(name),file("*_assemble-fail.f*") optional true  into g36_12_reads_failed22
+ set val(name),file("out*")  into g36_12_logFile3_g53_0
 
 script:
 method = params.Assemble_pairs_assemble_pairs.method
@@ -178,6 +175,7 @@ aligner = params.Assemble_pairs_assemble_pairs.aligner
 // dbexec = params.Assemble_pairs_assemble_pairs.// dbexec
 gap = params.Assemble_pairs_assemble_pairs.gap
 usearch_version = params.Assemble_pairs_assemble_pairs.usearch_version
+assemble_reference = params.Assemble_pairs_assemble_pairs.assemble_reference
 //* @style @condition:{method="align",alpha,maxerror,minlen,maxlen,scanrev}, {method="sequential",alpha,maxerror,minlen,maxlen,scanrev,ref_file,minident,evalue,maxhits,fill,aligner,align_exec,dbexec} {method="reference",ref_file,minident,evalue,maxhits,fill,aligner,align_exec,dbexec} {method="join",gap} @multicolumn:{method,coord,rc,head_fields_R1,head_fields_R2,failed,nrpoc,usearch_version},{alpha,maxerror,minlen,maxlen,scanrev}, {ref_file,minident,evalue,maxhits,fill,aligner,align_exec,dbexec}, {gap} 
 
 // args
@@ -195,8 +193,10 @@ fill = (fill=="false") ? "" : "--fill"
 // align_exec = (align_exec!="") ? "--exec ${align_exec}" : ""
 // dbexec = (dbexec!="") ? "--dbexec ${dbexec}" : ""
 
-def ref_file;
-if(params.assemble_ref != null) ref_file = (assemble_reference.startsWith('NO_FILE')) ? "" : "-r ${assemble_reference}"
+
+ref_file = (assemble_reference!='') ? "-r ${assemble_reference}" : ""
+
+
 
 args = ""
 
@@ -216,6 +216,8 @@ if(method=="align"){
 
 
 readArray = reads.toString().split(' ')	
+
+
 if(mate=="pair"){
 	R1 = readArray.grep(~/.*R1.*/)[0]
 	R2 = readArray.grep(~/.*R2.*/)[0]
@@ -243,7 +245,7 @@ if(mate=="pair"){
 	
 	
 	
-	AssemblePairs.py ${method} -1 ${R1} -2 ${R2} ${coord} ${rc} ${head_fields_R1} ${head_fields_R2} ${args} \$align_exec \$dbexec ${fasta} ${failed} --log AP_${name}.log ${nproc}
+	AssemblePairs.py ${method} -1 ${R1} -2 ${R2} ${coord} ${rc} ${head_fields_R1} ${head_fields_R2} ${args} \$align_exec \$dbexec ${fasta} ${failed} --log AP_${name}.log ${nproc} >> out_${R1}_AP.log
 	"""
 
 }else{
@@ -258,14 +260,15 @@ if(mate=="pair"){
 
 process Filter_Sequence_Quality_filter_seq_quality {
 
-publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /FS_.*$/) "FS_logs/$filename"}
 input:
  set val(name),file(reads) from g36_12_reads0_g0_0
  val mate from g_3_mate_g0_0
 
 output:
  set val(name), file("*_${method}-pass.fastq")  into g0_0_reads0_g38_11
- file "FS_*"  into g0_0_logFile1_g0_5
+ set val(name), file("FS_*")  into g0_0_logFile1_g0_5
+ set val(name), file("*_${method}-fail.fastq") optional true  into g0_0_reads22
+ set val(name),file("out*") optional true  into g0_0_logFile3_g53_0
 
 script:
 method = params.Filter_Sequence_Quality_filter_seq_quality.method
@@ -293,17 +296,18 @@ if(method=="quality"){
 
 readArray = reads.toString().split(' ')	
 
+
 if(mate=="pair"){
 	R1 = readArray.grep(~/.*R1.*/)[0]
 	R2 = readArray.grep(~/.*R2.*/)[0]
 	"""
-	FilterSeq.py ${method} -s $R1 ${q} ${n_length} ${n_missing} --outname ${name}_R1 --nproc ${nproc} --log FS_R1_${name}.log
-	FilterSeq.py ${method} -s $R2 ${q} ${n_length} ${n_missing} --outname ${name}_R2 --nproc ${nproc} --log FS_R2_${name}.log
+	FilterSeq.py ${method} -s $R1 ${q} ${n_length} ${n_missing} --nproc ${nproc} --log FS_R1_${name}.log --failed >> out_${R1}_FS.log
+	FilterSeq.py ${method} -s $R2 ${q} ${n_length} ${n_missing} --nproc ${nproc} --log FS_R2_${name}.log --failed >> out_${R1}_FS.log
 	"""
 }else{
 	R1 = readArray[0]
 	"""
-	FilterSeq.py ${method} -s $R1 ${q} ${n_length} ${n_missing} --outname ${name} --nproc ${nproc} --log FS_${name}.log
+	FilterSeq.py ${method} -s $R1 ${q} ${n_length} ${n_missing} --nproc ${nproc} --log FS_${name}.log --failed >> out_${R1}_FS.log
 	"""
 }
 
@@ -313,13 +317,13 @@ if(mate=="pair"){
 
 process Filter_Sequence_Quality_parse_log_FS {
 
-publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.tab$/) "outputparam/$filename"}
+publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.tab$/) "FS_log_table/$filename"}
 input:
- file log_file from g0_0_logFile1_g0_5
+ set val(name), file(log_file) from g0_0_logFile1_g0_5
  val mate from g_3_mate_g0_5
 
 output:
- file "*.tab"  into g0_5_logFile00
+ set val(name), file("*.tab")  into g0_5_logFile0_g0_7
 
 script:
 readArray = log_file.toString()
@@ -331,15 +335,161 @@ ParseLog.py -l ${readArray}  -f ID QUALITY
 }
 
 
+process Filter_Sequence_Quality_report_filter_Seq_Quality {
+
+input:
+ val matee from g_3_mate_g0_7
+ set val(name), file(log_files) from g0_5_logFile0_g0_7
+
+output:
+ file "*.rmd"  into g0_7_rMarkdown0_g0_9
+
+
+shell:
+
+if(matee=="pair"){
+	readArray = log_files.toString().split(' ')	
+	R1 = readArray.grep(~/.*R1.*/)[0]
+	R2 = readArray.grep(~/.*R2.*/)[0]
+
+	'''
+	#!/usr/bin/env perl
+	
+	
+	my $script = <<'EOF';
+	
+	
+	
+	```{R, message=FALSE, echo=FALSE, results="hide"}
+	# Setup
+	library(prestor)
+	library(knitr)
+	library(captioner)
+	
+	plot_titles <- c("Read 1", "Read 2")
+	if (!exists("tables")) { tables <- captioner(prefix="Table") }
+	if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+	figures("quality", 
+	        paste("Mean Phred quality scores for",  plot_titles[1], "(top) and", plot_titles[2], "(bottom).",
+	              "The dotted line indicates the average quality score under which reads were removed."))
+	```
+	
+	```{r, echo=FALSE}
+	quality_log_1 <- loadLogTable(file.path(".", "!{R1}"))
+	quality_log_2 <- loadLogTable(file.path(".", "!{R2}"))
+	```
+	
+	# Quality Scores
+	
+	Quality filtering is an essential step in most sequencing workflows. pRESTO’s
+	FilterSeq tool remove reads with low mean Phred quality scores. 
+	Phred quality scores are assigned to each nucleotide base call in automated 
+	sequencer traces. The quality score (`Q`) of a base call is logarithmically 
+	related to the probability that a base call is incorrect (`P`): 
+	$Q = -10 log_{10} P$. For example, a base call with `Q=30` is incorrectly 
+	assigned 1 in 1000 times. The most commonly used approach is to remove read 
+	with average `Q` below 20.
+	
+	```{r, echo=FALSE}
+	plotFilterSeq(quality_log_1, quality_log_2, titles=plot_titles, sizing="figure")
+	```
+	
+	`r figures("quality")`
+		
+	EOF
+	
+	open OUT, ">!{name}.rmd";
+	print OUT $script;
+	close OUT;
+	
+	'''
+
+}else{
+
+	readArray = log_files.toString().split(' ')
+	R1 = readArray[0]
+	
+	'''
+	#!/usr/bin/env perl
+	
+	
+	my $script = <<'EOF';
+	
+	
+	```{R, message=FALSE, echo=FALSE, results="hide"}
+	# Setup
+	library(prestor)
+	library(knitr)
+	library(captioner)
+	
+	plot_titles <- c("Read")#params$quality_titles
+	if (!exists("tables")) { tables <- captioner(prefix="Table") }
+	if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+	figures("quality", 
+	        paste("Mean Phred quality scores for",  plot_titles[1],
+	              "The dotted line indicates the average quality score under which reads were removed."))
+	```
+	
+	```{r, echo=FALSE}
+	quality_log_1 <- loadLogTable(file.path(".", "!{R1}"))
+	```
+	
+	# Quality Scores
+	
+	Quality filtering is an essential step in most sequencing workflows. pRESTO’s
+	FilterSeq tool remove reads with low mean Phred quality scores. 
+	Phred quality scores are assigned to each nucleotide base call in automated 
+	sequencer traces. The quality score (`Q`) of a base call is logarithmically 
+	related to the probability that a base call is incorrect (`P`): 
+	$Q = -10 log_{10} P$. For example, a base call with `Q=30` is incorrectly 
+	assigned 1 in 1000 times. The most commonly used approach is to remove read 
+	with average `Q` below 20.
+	
+	```{r, echo=FALSE}
+	plotFilterSeq(quality_log_1, titles=plot_titles[1], sizing="figure")
+	```
+	
+	`r figures("quality")`
+	
+	EOF
+	
+	open OUT, ">!{name}.rmd";
+	print OUT $script;
+	close OUT;
+	
+	'''
+}
+}
+
+
+process Filter_Sequence_Quality_render_rmarkdown {
+
+publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.html$/) "FSQ_report/$filename"}
+input:
+ file rmk from g0_7_rMarkdown0_g0_9
+
+output:
+ file "*.html"  into g0_9_outputFileHTML00
+
+"""
+
+#!/usr/bin/env Rscript 
+
+rmarkdown::render("${rmk}", clean=TRUE, output_format="html_document", output_dir=".")
+
+"""
+}
+
+
 process Assemble_pairs_parse_log_AP {
 
-publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.tab$/) "AP_log/$filename"}
+publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.tab$/) "AP_log_table/$filename"}
 input:
- file log_file from g36_12_logFile1_g36_15
+ set val(name),file(log_file) from g36_12_logFile1_g36_15
  val mate from g_39_mate_g36_15
 
 output:
- file "*.tab"  into g36_15_logFile00
+ set val(name),file("*.tab")  into g36_15_logFile0_g36_19
 
 script:
 field_to_parse = params.Assemble_pairs_parse_log_AP.field_to_parse
@@ -353,36 +503,179 @@ ParseLog.py -l ${readArray}  -f ${field_to_parse}
 }
 
 
+process Assemble_pairs_report_assemble_pairs {
 
-process Mask_Primer_V_MaskPrimers {
+input:
+ set val(name),file(log_files) from g36_15_logFile0_g36_19
+ val matee from g_39_mate_g36_19
 
-publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_primers-pass.fastq$/) "outputparam/$filename"}
-publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /MP_.*$/) "MP_V_log_table/$filename"}
+output:
+ file "*.rmd"  into g36_19_rMarkdown0_g36_22
+
+
+
+shell:
+
+if(matee=="pair"){
+	readArray = log_files.toString().split(' ')
+	assemble = readArray[0]
+	'''
+	#!/usr/bin/env perl
+	
+	
+	my $script = <<'EOF';
+	
+	```{r, message=FALSE, echo=FALSE, results="hide"}
+	# Setup
+	library(prestor)
+	library(knitr)
+	library(captioner)
+	
+	if (!exists("tables")) { tables <- captioner(prefix="Table") }
+	if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+	figures("assemble_length", "Histogram showing the distribution assembled sequence lengths in 
+	                            nucleotides for the Align step (top) and Reference step (bottom).")
+	figures("assemble_overlap", "Histogram showing the distribution of overlapping nucleotides between 
+	                             mate-pairs for the Align step (top) and Reference step (bottom).
+	                             Negative values for overlap indicate non-overlapping mate-pairs
+	                             with the negative value being the number of gap characters between
+	                             the ends of the two mate-pairs.")
+	figures("assemble_error", "Histograms showing the distribution of paired-end assembly error 
+	                           rates for the Align step (top) and identity to the reference germline 
+	                           for the Reference step (bottom).")
+	figures("assemble_pvalue", "Histograms showing the distribution of significance scores for 
+	                            paired-end assemblies. P-values for the Align mode are shown in the top
+	                            panel. E-values from the Reference step's alignment against the 
+	                            germline sequences are shown in the bottom panel for both input files
+	                            separately.")
+	```
+	
+	```{r, echo=FALSE, warning=FALSE}
+	assemble_log <- loadLogTable(file.path(".", "!{assemble}"))
+	
+	# Subset to align and reference logs
+	align_fields <- c("ERROR", "PVALUE")
+	ref_fields <- c("REFID", "GAP", "EVALUE1", "EVALUE2", "IDENTITY")
+	align_log <- assemble_log[!is.na(assemble_log$ERROR), !(names(assemble_log) %in% ref_fields)]
+	ref_log <- assemble_log[!is.na(assemble_log$REFID), !(names(assemble_log) %in% align_fields)]
+	
+	# Build log set
+	assemble_list <- list()
+	if (nrow(align_log) > 0) { assemble_list[["Align"]] <- align_log }
+	if (nrow(ref_log) > 0) { assemble_list[["Reference"]] <- ref_log }
+	plot_titles <- names(assemble_list)
+	```
+	
+	# Paired-End Assembly
+	
+	Assembly of paired-end reads is performed using the AssemblePairs tool which 
+	determines the read overlap in two steps. First, de novo assembly is attempted 
+	using an exhaustive approach to identify all possible overlaps between the 
+	two reads with alignment error rates and p-values below user-defined thresholds. 
+	This method is denoted as the `Align` method in the following figures. 
+	Second, those reads failing the first stage of de novo assembly are then 
+	mapped to the V-region reference sequences to create a full length sequence, 
+	padding with Ns, for any amplicons that have insufficient overlap for 
+	de novo assembly. This second stage is referred to as the `Reference` step in the
+	figures below.
+	
+	## Assembled sequence lengths
+	
+	```{r, echo=FALSE, warning=FALSE}
+	plot_params <- list(titles=plot_titles, style="length", sizing="figure")
+	do.call(plotAssemblePairs, c(assemble_list, plot_params))
+	```
+	
+	`r figures("assemble_length")`
+	
+	```{r, echo=FALSE, warning=FALSE}
+	plot_params <- list(titles=plot_titles, style="overlap", sizing="figure")
+	do.call(plotAssemblePairs, c(assemble_list, plot_params))
+	```
+	
+	`r figures("assemble_overlap")`
+	
+	## Alignment error rates and significance
+	
+	```{r, echo=FALSE, warning=FALSE}
+	plot_params <- list(titles=plot_titles, style="error", sizing="figure")
+	do.call(plotAssemblePairs, c(assemble_list, plot_params))
+	```
+	
+	`r figures("assemble_error")`
+	
+	```{r, echo=FALSE, warning=FALSE}
+	plot_params <- list(titles=plot_titles, style="pvalue", sizing="figure")
+	do.call(plotAssemblePairs, c(assemble_list, plot_params))
+	```
+
+	`r figures("assemble_pvalue")`
+
+	EOF
+	
+	open OUT, ">!{name}.rmd";
+	print OUT $script;
+	close OUT;
+	
+	'''
+
+}else{
+	
+	"""
+	echo -e 'AssemblePairs works only on pair-end reads.'
+	"""
+}
+}
+
+
+process Assemble_pairs_render_rmarkdown {
+
+publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.html$/) "AP_report/$filename"}
+input:
+ file rmk from g36_19_rMarkdown0_g36_22
+
+output:
+ file "*.html"  into g36_22_outputFileHTML00
+
+"""
+
+#!/usr/bin/env Rscript 
+
+rmarkdown::render("${rmk}", clean=TRUE, output_format="html_document", output_dir=".")
+
+"""
+}
+
+
+process Mask_Primer_v_MaskPrimers {
+
 input:
  val mate from g_3_mate_g38_11
  set val(name),file(reads) from g0_0_reads0_g38_11
- file R1_primers from g_7_R1_primers_g38_11
 
 output:
- set val(name), file("*_primers-pass.fastq")  into g38_11_reads00
+ set val(name), file("*_primers-pass.fastq")  into g38_11_reads0_g47_11
  set val(name), file("*_primers-fail.fastq") optional true  into g38_11_reads_failed11
- file "MP_*"  into g38_11_logFile2_g38_9
+ set val(name), file("MP_*")  into g38_11_logFile2_g38_9
+ set val(name),file("out*")  into g38_11_logFile3_g53_0
 
 script:
-method = params.Mask_Primer_V_MaskPrimers.method
-barcode_field = params.Mask_Primer_V_MaskPrimers.barcode_field
-primer_field = params.Mask_Primer_V_MaskPrimers.primer_field
-barcode = params.Mask_Primer_V_MaskPrimers.barcode
-revpr = params.Mask_Primer_V_MaskPrimers.revpr
-mode = params.Mask_Primer_V_MaskPrimers.mode
-failed = params.Mask_Primer_V_MaskPrimers.failed
-nproc = params.Mask_Primer_V_MaskPrimers.nproc
-maxerror = params.Mask_Primer_V_MaskPrimers.maxerror
-umi_length = params.Mask_Primer_V_MaskPrimers.umi_length
-start = params.Mask_Primer_V_MaskPrimers.start
-extract_length = params.Mask_Primer_V_MaskPrimers.extract_length
-maxlen = params.Mask_Primer_V_MaskPrimers.maxlen
-skiprc = params.Mask_Primer_V_MaskPrimers.skiprc
+method = params.Mask_Primer_v_MaskPrimers.method
+barcode_field = params.Mask_Primer_v_MaskPrimers.barcode_field
+primer_field = params.Mask_Primer_v_MaskPrimers.primer_field
+barcode = params.Mask_Primer_v_MaskPrimers.barcode
+revpr = params.Mask_Primer_v_MaskPrimers.revpr
+mode = params.Mask_Primer_v_MaskPrimers.mode
+failed = params.Mask_Primer_v_MaskPrimers.failed
+nproc = params.Mask_Primer_v_MaskPrimers.nproc
+maxerror = params.Mask_Primer_v_MaskPrimers.maxerror
+umi_length = params.Mask_Primer_v_MaskPrimers.umi_length
+start = params.Mask_Primer_v_MaskPrimers.start
+extract_length = params.Mask_Primer_v_MaskPrimers.extract_length
+maxlen = params.Mask_Primer_v_MaskPrimers.maxlen
+skiprc = params.Mask_Primer_v_MaskPrimers.skiprc
+R1_primers = params.Mask_Primer_v_MaskPrimers.R1_primers
+R2_primers = params.Mask_Primer_v_MaskPrimers.R2_primers
 //* @style @condition:{method="score",umi_length,start,maxerror}{method="extract",umi_length,start},{method="align",maxerror,maxlen,skiprc}, {method="extract",start,extract_length} @array:{method,barcode_field,primer_field,barcode,revpr,mode,maxerror,umi_length,start,extract_length,maxlen,skiprc} @multicolumn:{method,barcode_field,primer_field,barcode,revpr,mode,failed,nproc,maxerror,umi_length,start,extract_length,maxlen,skiprc}
 
 method = (method.collect().size==2) ? method : [method[0],method[0]]
@@ -418,53 +711,64 @@ def args_values = [];
     ml = (m=="align") ? "--maxlen ${ml}" : "" 
     sk = (m=="align" && sk=="true") ? "--skiprc" : "" 
     
+    PRIMER_FIELD = "${pf}"
+    
     // all
     bf = (bf=="") ? "" : "--bf ${bf}"
     pf = (pf=="") ? "" : "--pf ${pf}"
     bc = (bc=="false") ? "" : "--barcode"
     rp = (rp=="false") ? "" : "--revpr"
     args_values.add("${m} --mode ${md} ${bf} ${pf} ${bc} ${rp} ${mr} ${s} ${el} ${ml} ${sk}")
+    
+    
 }}
 
+readArray = reads.toString().split(' ')
 if(mate=="pair"){
 	args_1 = args_values[0]
 	args_2 = args_values[1]
 	
-    readArray = reads.toString().split(' ')	
+  
+
+
 	R1 = readArray.grep(~/.*R1.*/)[0]
 	R2 = readArray.grep(~/.*R2.*/)[0]
 	
 	R1_primers = (method[0]=="extract") ? "" : "-p ${R1_primers}"
 	R2_primers = (method[1]=="extract") ? "" : "-p ${R2_primers}"
 	
+	
 	"""
-	MaskPrimers.py ${args_1} -s ${R1} ${R1_primers} --log MP_R1_${name}.log  --nproc ${nproc} ${failed}
-	MaskPrimers.py ${args_2} -s ${R2} ${R2_primers} --log MP_R2_${name}.log  --nproc ${nproc} ${failed}
+	
+	MaskPrimers.py ${args_1} -s ${R1} ${R1_primers} --log MP_R1_${name}.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
+	MaskPrimers.py ${args_2} -s ${R2} ${R2_primers} --log MP_R2_${name}.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
 	"""
 }else{
 	args_1 = args_values[0]
 	println args_1
 	R1_primers = (method[0]=="extract") ? "" : "-p ${R1_primers}"
 	
+	R1 = readArray[0]
+
 	"""
 	echo -e "Assuming inputs for R1\n"
 	
-	MaskPrimers.py ${args_1} -s ${reads} ${R1_primers} --log MP_${name}.log  --nproc ${nproc} ${failed}
+	MaskPrimers.py ${args_1} -s ${reads} ${R1_primers} --log MP_${name}.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
 	"""
 }
 
 }
 
 
-process Mask_Primer_V_parse_log_MP {
+process Mask_Primer_v_parse_log_MP {
 
-publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.tab$/) "MP_logs_Cprimer/$filename"}
+publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.tab$/) "MP_v_log_table/$filename"}
 input:
  val mate from g_3_mate_g38_9
- file log_file from g38_11_logFile2_g38_9
+ set val(name), file(log_file) from g38_11_logFile2_g38_9
 
 output:
- file "*.tab"  into g38_9_logFile00
+ set val(name), file("*.tab")  into g38_9_logFile0_g38_12
 
 script:
 readArray = log_file.toString()	
@@ -476,19 +780,224 @@ ParseLog.py -l ${readArray}  -f ID PRIMER BARCODE ERROR
 }
 
 
+process Mask_Primer_v_try_report_maskprimer {
+
+input:
+ set val(name), file(primers) from g38_9_logFile0_g38_12
+ val matee from g_3_mate_g38_12
+
+output:
+ file "*.rmd"  into g38_12_rMarkdown0_g38_16
+
+
+shell:
+
+if(matee=="pair"){
+	readArray = primers.toString().split(' ')	
+	primers_1 = readArray.grep(~/.*R1.*/)[0]
+	primers_2 = readArray.grep(~/.*R2.*/)[0]
+
+	'''
+	#!/usr/bin/env perl
+	
+	
+	my $script = <<'EOF';
+	
+	
+	```{r, message=FALSE, echo=FALSE, results="hide"}
+	
+	# Setup
+	library(prestor)
+	library(knitr)
+	library(captioner)
+	
+	
+	plot_titles<- c("Read 1", "Read 2")
+	print(plot_titles)
+	if (!exists("tables")) { tables <- captioner(prefix="Table") }
+	if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+	figures("primers_count", 
+	        paste("Count of assigned primers for",  plot_titles[1], "(top) and", plot_titles[2], "(bottom).",
+	              "The bar height indicates the total reads assigned to the given primer,
+	               stacked for those under the error rate threshold (Pass) and
+	               over the threshold (Fail)."))
+	figures("primers_hist", 
+	        paste("Distribution of primer match error rates for", plot_titles[1], "(top) and", plot_titles[2], "(bottom).",
+	              "The error rate is the percentage of mismatches between the primer sequence and the 
+	               read for the best matching primer. The dotted line indicates the error threshold used."))
+	figures("primers_error", 
+	        paste("Distribution of primer match error rates for", plot_titles[1], "(top) and", plot_titles[2], "(bottom),",
+	              "broken down by assigned primer. The error rate is the percentage of mismatches between the 
+	               primer sequence and the read for the best matching primer. The dotted line indicates the error
+	               threshold used."))
+	```
+	
+	```{r, echo=FALSE}
+	primer_log_1 <- loadLogTable(file.path(".", "!{primers_1}"))
+	primer_log_2 <- loadLogTable(file.path(".", "!{primers_2}"))
+	```
+	
+	# Primer Identification
+	
+	The MaskPrimers tool supports identification of multiplexed primers and UMIs.
+	Identified primer regions may be masked (with Ns) or cut to mitigate downstream
+	SHM analysis artifacts due to errors in the primer region. An annotion is added to 
+	each sequences that indicates the UMI and best matching primer. In the case of
+	the constant region primer, the primer annotation may also be used for isotype 
+	assignment.
+	
+	## Count of primer matches
+	
+	```{r, echo=FALSE, warning=FALSE}
+	plotMaskPrimers(primer_log_1, primer_log_2, titles=plot_titles,
+	                style="count", sizing="figure")
+	```
+	
+	`r figures("primers_count")`
+	
+	## Primer match error rates
+	
+	```{r, echo=FALSE, warning=FALSE}
+	plotMaskPrimers(primer_log_1, primer_log_2, titles=plot_titles, 
+	                style="hist", sizing="figure")
+	```
+	
+	`r figures("primers_hist")`
+	
+	```{r, echo=FALSE, warning=FALSE}
+	plotMaskPrimers(primer_log_1, primer_log_2, titles=plot_titles, 
+	                style="error", sizing="figure")
+	```
+	
+	`r figures("primers_error")`
+	
+	EOF
+	
+	open OUT, ">!{name}.rmd";
+	print OUT $script;
+	close OUT;
+	
+	'''
+
+}else{
+
+	readArray = primers.toString().split(' ')
+	primers = readArray.grep(~/.*.tab*/)[0]
+
+	'''
+	#!/usr/bin/env perl
+	
+	
+	my $script = <<'EOF';
+	
+	
+	```{r, message=FALSE, echo=FALSE, results="hide"}
+	
+	# Setup
+	library(prestor)
+	library(knitr)
+	library(captioner)
+	
+	
+	plot_titles<- c("Read")
+	print(plot_titles)
+	if (!exists("tables")) { tables <- captioner(prefix="Table") }
+	if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+	figures("primers_count", 
+	        paste("Count of assigned primers for",  plot_titles[1],
+	              "The bar height indicates the total reads assigned to the given primer,
+	               stacked for those under the error rate threshold (Pass) and
+	               over the threshold (Fail)."))
+	figures("primers_hist", 
+	        paste("Distribution of primer match error rates for", plot_titles[1],
+	              "The error rate is the percentage of mismatches between the primer sequence and the 
+	               read for the best matching primer. The dotted line indicates the error threshold used."))
+	figures("primers_error", 
+	        paste("Distribution of primer match error rates for", plot_titles[1],
+	              "broken down by assigned primer. The error rate is the percentage of mismatches between the 
+	               primer sequence and the read for the best matching primer. The dotted line indicates the error
+	               threshold used."))
+	```
+	
+	```{r, echo=FALSE}
+	primer_log_1 <- loadLogTable(file.path(".", "!{primers}"))
+	```
+	
+	# Primer Identification
+	
+	The MaskPrimers tool supports identification of multiplexed primers and UMIs.
+	Identified primer regions may be masked (with Ns) or cut to mitigate downstream
+	SHM analysis artifacts due to errors in the primer region. An annotion is added to 
+	each sequences that indicates the UMI and best matching primer. In the case of
+	the constant region primer, the primer annotation may also be used for isotype 
+	assignment.
+	
+	## Count of primer matches
+	
+	```{r, echo=FALSE, warning=FALSE}
+	plotMaskPrimers(primer_log_1, titles=plot_titles,
+	                style="count", sizing="figure")
+	```
+	
+	`r figures("primers_count")`
+	
+	## Primer match error rates
+	
+	```{r, echo=FALSE, warning=FALSE}
+	plotMaskPrimers(primer_log_1, titles=plot_titles, 
+	                style="hist", sizing="figure")
+	```
+	
+	`r figures("primers_hist")`
+	
+	```{r, echo=FALSE, warning=FALSE}
+	plotMaskPrimers(primer_log_1, titles=plot_titles, 
+	                style="error", sizing="figure")
+	```
+	
+	`r figures("primers_error")`
+	
+	EOF
+	
+	open OUT, ">!{name}.rmd";
+	print OUT $script;
+	close OUT;
+	
+	'''
+}
+}
+
+
+process Mask_Primer_v_render_rmarkdown {
+
+publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.html$/) "MP_v_report/$filename"}
+input:
+ file rmk from g38_12_rMarkdown0_g38_16
+
+output:
+ file "*.html"  into g38_16_outputFileHTML00
+
+"""
+
+#!/usr/bin/env Rscript 
+
+rmarkdown::render("${rmk}", clean=TRUE, output_format="html_document", output_dir=".")
+
+"""
+}
+
 
 process Mask_Primer_MaskPrimers {
 
-publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_primers-pass.fastq$/) "outputparam/$filename"}
-publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /MP_.*$/) "MP_C_log_table/$filename"}
 input:
- val mate from g_3_mate_g41_11
- file R1_primers from g_6_R1_primers_g41_11
+ val mate from g_3_mate_g47_11
+ set val(name),file(reads) from g38_11_reads0_g47_11
 
 output:
- set val(name), file("*_primers-pass.fastq")  into g41_11_reads00
- set val(name), file("*_primers-fail.fastq") optional true  into g41_11_reads_failed1_g22_16
- file "MP_*"  into g41_11_logFile2_g41_9
+ set val(name), file("*_primers-pass.fastq")  into g47_11_reads0_g22_16
+ set val(name), file("*_primers-fail.fastq") optional true  into g47_11_reads_failed11
+ set val(name), file("MP_*")  into g47_11_logFile2_g47_9
+ set val(name),file("out*")  into g47_11_logFile3_g53_0
 
 script:
 method = params.Mask_Primer_MaskPrimers.method
@@ -505,6 +1014,8 @@ start = params.Mask_Primer_MaskPrimers.start
 extract_length = params.Mask_Primer_MaskPrimers.extract_length
 maxlen = params.Mask_Primer_MaskPrimers.maxlen
 skiprc = params.Mask_Primer_MaskPrimers.skiprc
+R1_primers = params.Mask_Primer_MaskPrimers.R1_primers
+R2_primers = params.Mask_Primer_MaskPrimers.R2_primers
 //* @style @condition:{method="score",umi_length,start,maxerror}{method="extract",umi_length,start},{method="align",maxerror,maxlen,skiprc}, {method="extract",start,extract_length} @array:{method,barcode_field,primer_field,barcode,revpr,mode,maxerror,umi_length,start,extract_length,maxlen,skiprc} @multicolumn:{method,barcode_field,primer_field,barcode,revpr,mode,failed,nproc,maxerror,umi_length,start,extract_length,maxlen,skiprc}
 
 method = (method.collect().size==2) ? method : [method[0],method[0]]
@@ -540,38 +1051,49 @@ def args_values = [];
     ml = (m=="align") ? "--maxlen ${ml}" : "" 
     sk = (m=="align" && sk=="true") ? "--skiprc" : "" 
     
+    PRIMER_FIELD = "${pf}"
+    
     // all
     bf = (bf=="") ? "" : "--bf ${bf}"
     pf = (pf=="") ? "" : "--pf ${pf}"
     bc = (bc=="false") ? "" : "--barcode"
     rp = (rp=="false") ? "" : "--revpr"
     args_values.add("${m} --mode ${md} ${bf} ${pf} ${bc} ${rp} ${mr} ${s} ${el} ${ml} ${sk}")
+    
+    
 }}
 
+readArray = reads.toString().split(' ')
 if(mate=="pair"){
 	args_1 = args_values[0]
 	args_2 = args_values[1]
 	
-    readArray = reads.toString().split(' ')	
+  
+
+
 	R1 = readArray.grep(~/.*R1.*/)[0]
 	R2 = readArray.grep(~/.*R2.*/)[0]
 	
 	R1_primers = (method[0]=="extract") ? "" : "-p ${R1_primers}"
 	R2_primers = (method[1]=="extract") ? "" : "-p ${R2_primers}"
 	
+	
 	"""
-	MaskPrimers.py ${args_1} -s ${R1} ${R1_primers} --log MP_R1_${name}.log  --nproc ${nproc} ${failed}
-	MaskPrimers.py ${args_2} -s ${R2} ${R2_primers} --log MP_R2_${name}.log  --nproc ${nproc} ${failed}
+	
+	MaskPrimers.py ${args_1} -s ${R1} ${R1_primers} --log MP_R1_${name}.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
+	MaskPrimers.py ${args_2} -s ${R2} ${R2_primers} --log MP_R2_${name}.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
 	"""
 }else{
 	args_1 = args_values[0]
 	println args_1
 	R1_primers = (method[0]=="extract") ? "" : "-p ${R1_primers}"
 	
+	R1 = readArray[0]
+
 	"""
 	echo -e "Assuming inputs for R1\n"
 	
-	MaskPrimers.py ${args_1} -s ${reads} ${R1_primers} --log MP_${name}.log  --nproc ${nproc} ${failed}
+	MaskPrimers.py ${args_1} -s ${reads} ${R1_primers} --log MP_${name}.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
 	"""
 }
 
@@ -580,13 +1102,13 @@ if(mate=="pair"){
 
 process Mask_Primer_parse_log_MP {
 
-publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.tab$/) "MP_log_Cprimer/$filename"}
+publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.tab$/) "MP_c_log_table/$filename"}
 input:
- val mate from g_3_mate_g41_9
- file log_file from g41_11_logFile2_g41_9
+ val mate from g_3_mate_g47_9
+ set val(name), file(log_file) from g47_11_logFile2_g47_9
 
 output:
- file "*.tab"  into g41_9_logFile00
+ set val(name), file("*.tab")  into g47_9_logFile0_g47_12
 
 script:
 readArray = log_file.toString()	
@@ -598,18 +1120,226 @@ ParseLog.py -l ${readArray}  -f ID PRIMER BARCODE ERROR
 }
 
 
+process Mask_Primer_try_report_maskprimer {
+
+input:
+ set val(name), file(primers) from g47_9_logFile0_g47_12
+ val matee from g_3_mate_g47_12
+
+output:
+ file "*.rmd"  into g47_12_rMarkdown0_g47_16
+
+
+shell:
+
+if(matee=="pair"){
+	readArray = primers.toString().split(' ')	
+	primers_1 = readArray.grep(~/.*R1.*/)[0]
+	primers_2 = readArray.grep(~/.*R2.*/)[0]
+
+	'''
+	#!/usr/bin/env perl
+	
+	
+	my $script = <<'EOF';
+	
+	
+	```{r, message=FALSE, echo=FALSE, results="hide"}
+	
+	# Setup
+	library(prestor)
+	library(knitr)
+	library(captioner)
+	
+	
+	plot_titles<- c("Read 1", "Read 2")
+	print(plot_titles)
+	if (!exists("tables")) { tables <- captioner(prefix="Table") }
+	if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+	figures("primers_count", 
+	        paste("Count of assigned primers for",  plot_titles[1], "(top) and", plot_titles[2], "(bottom).",
+	              "The bar height indicates the total reads assigned to the given primer,
+	               stacked for those under the error rate threshold (Pass) and
+	               over the threshold (Fail)."))
+	figures("primers_hist", 
+	        paste("Distribution of primer match error rates for", plot_titles[1], "(top) and", plot_titles[2], "(bottom).",
+	              "The error rate is the percentage of mismatches between the primer sequence and the 
+	               read for the best matching primer. The dotted line indicates the error threshold used."))
+	figures("primers_error", 
+	        paste("Distribution of primer match error rates for", plot_titles[1], "(top) and", plot_titles[2], "(bottom),",
+	              "broken down by assigned primer. The error rate is the percentage of mismatches between the 
+	               primer sequence and the read for the best matching primer. The dotted line indicates the error
+	               threshold used."))
+	```
+	
+	```{r, echo=FALSE}
+	primer_log_1 <- loadLogTable(file.path(".", "!{primers_1}"))
+	primer_log_2 <- loadLogTable(file.path(".", "!{primers_2}"))
+	```
+	
+	# Primer Identification
+	
+	The MaskPrimers tool supports identification of multiplexed primers and UMIs.
+	Identified primer regions may be masked (with Ns) or cut to mitigate downstream
+	SHM analysis artifacts due to errors in the primer region. An annotion is added to 
+	each sequences that indicates the UMI and best matching primer. In the case of
+	the constant region primer, the primer annotation may also be used for isotype 
+	assignment.
+	
+	## Count of primer matches
+	
+	```{r, echo=FALSE, warning=FALSE}
+	plotMaskPrimers(primer_log_1, primer_log_2, titles=plot_titles,
+	                style="count", sizing="figure")
+	```
+	
+	`r figures("primers_count")`
+	
+	## Primer match error rates
+	
+	```{r, echo=FALSE, warning=FALSE}
+	plotMaskPrimers(primer_log_1, primer_log_2, titles=plot_titles, 
+	                style="hist", sizing="figure")
+	```
+	
+	`r figures("primers_hist")`
+	
+	```{r, echo=FALSE, warning=FALSE}
+	plotMaskPrimers(primer_log_1, primer_log_2, titles=plot_titles, 
+	                style="error", sizing="figure")
+	```
+	
+	`r figures("primers_error")`
+	
+	EOF
+	
+	open OUT, ">!{name}.rmd";
+	print OUT $script;
+	close OUT;
+	
+	'''
+
+}else{
+
+	readArray = primers.toString().split(' ')
+	primers = readArray.grep(~/.*.tab*/)[0]
+
+	'''
+	#!/usr/bin/env perl
+	
+	
+	my $script = <<'EOF';
+	
+	
+	```{r, message=FALSE, echo=FALSE, results="hide"}
+	
+	# Setup
+	library(prestor)
+	library(knitr)
+	library(captioner)
+	
+	
+	plot_titles<- c("Read")
+	print(plot_titles)
+	if (!exists("tables")) { tables <- captioner(prefix="Table") }
+	if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+	figures("primers_count", 
+	        paste("Count of assigned primers for",  plot_titles[1],
+	              "The bar height indicates the total reads assigned to the given primer,
+	               stacked for those under the error rate threshold (Pass) and
+	               over the threshold (Fail)."))
+	figures("primers_hist", 
+	        paste("Distribution of primer match error rates for", plot_titles[1],
+	              "The error rate is the percentage of mismatches between the primer sequence and the 
+	               read for the best matching primer. The dotted line indicates the error threshold used."))
+	figures("primers_error", 
+	        paste("Distribution of primer match error rates for", plot_titles[1],
+	              "broken down by assigned primer. The error rate is the percentage of mismatches between the 
+	               primer sequence and the read for the best matching primer. The dotted line indicates the error
+	               threshold used."))
+	```
+	
+	```{r, echo=FALSE}
+	primer_log_1 <- loadLogTable(file.path(".", "!{primers}"))
+	```
+	
+	# Primer Identification
+	
+	The MaskPrimers tool supports identification of multiplexed primers and UMIs.
+	Identified primer regions may be masked (with Ns) or cut to mitigate downstream
+	SHM analysis artifacts due to errors in the primer region. An annotion is added to 
+	each sequences that indicates the UMI and best matching primer. In the case of
+	the constant region primer, the primer annotation may also be used for isotype 
+	assignment.
+	
+	## Count of primer matches
+	
+	```{r, echo=FALSE, warning=FALSE}
+	plotMaskPrimers(primer_log_1, titles=plot_titles,
+	                style="count", sizing="figure")
+	```
+	
+	`r figures("primers_count")`
+	
+	## Primer match error rates
+	
+	```{r, echo=FALSE, warning=FALSE}
+	plotMaskPrimers(primer_log_1, titles=plot_titles, 
+	                style="hist", sizing="figure")
+	```
+	
+	`r figures("primers_hist")`
+	
+	```{r, echo=FALSE, warning=FALSE}
+	plotMaskPrimers(primer_log_1, titles=plot_titles, 
+	                style="error", sizing="figure")
+	```
+	
+	`r figures("primers_error")`
+	
+	EOF
+	
+	open OUT, ">!{name}.rmd";
+	print OUT $script;
+	close OUT;
+	
+	'''
+}
+}
+
+
+process Mask_Primer_render_rmarkdown {
+
+publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.html$/) "MP_report/$filename"}
+input:
+ file rmk from g47_12_rMarkdown0_g47_16
+
+output:
+ file "*.html"  into g47_16_outputFileHTML00
+
+"""
+
+#!/usr/bin/env Rscript 
+
+rmarkdown::render("${rmk}", clean=TRUE, output_format="html_document", output_dir=".")
+
+"""
+}
+
+
 process collapse_sequences_collapse_seq {
 
 publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_collapse-unique.fast.*$/) "reads_unique/$filename"}
-publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_collapse-duplicate.fast.*$/) "reads_duplicated/$filename"}
-publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_collapse-undetermined.fast.*$/) "reads_unique/$filename"}
 input:
- set val(name), file(reads) from g41_11_reads_failed1_g22_16
+ set val(name), file(reads) from g47_11_reads0_g22_16
+ val mate from g_3_mate_g22_16
 
 output:
  set val(name),  file("*_collapse-unique.fast*")  into g22_16_reads0_g26_20
  set val(name),  file("*_collapse-duplicate.fast*") optional true  into g22_16_reads_duplicate11
  set val(name),  file("*_collapse-undetermined.fast*") optional true  into g22_16_reads_undetermined22
+ file "CS_*"  into g22_16_logFile33
+ set val(name),  file("out*")  into g22_16_logFile4_g53_0
 
 script:
 max_missing = params.collapse_sequences_collapse_seq.max_missing
@@ -619,15 +1349,26 @@ act = params.collapse_sequences_collapse_seq.act
 uf = params.collapse_sequences_collapse_seq.uf
 cf = params.collapse_sequences_collapse_seq.cf
 nproc = params.collapse_sequences_collapse_seq.nproc
+failed = params.collapse_sequences_collapse_seq.failed
 
 inner = (inner=="true") ? "--inner" : ""
 fasta = (fasta=="true") ? "--fasta" : ""
 act = (act=="none") ? "" : "--act ${act}"
 cf = (cf=="") ? "" : "--cf ${cf}"
 uf = (uf=="") ? "" : "--uf ${uf}"
+failed = (failed=="false") ? "" : "--failed"
+
+readArray = reads.toString().split(' ')	
+if(mate=="pair"){
+	R1 = readArray.grep(~/.*R1.*/)[0]
+	R2 = readArray.grep(~/.*R2.*/)[0]
+}else{
+	R1 = readArray[0]
+}
+
 
 """
-CollapseSeq.py -s ${reads} -n ${max_missing} ${fasta} ${inner} ${uf} ${cf} ${act}
+CollapseSeq.py -s ${reads} -n ${max_missing} ${fasta} ${inner} ${uf} ${cf} ${act} --log CS_${name}.log ${failed} >> out_${R1}_collapse.log
 """
 
 }
@@ -638,13 +1379,26 @@ process split_sequences_split_seq {
 publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_atleast-.*.fastq$/) "split_sequence_reads/$filename"}
 input:
  set val(name),file(reads) from g22_16_reads0_g26_20
+ val mate from g_3_mate_g26_20
 
 output:
  set val(name), file("*_atleast-*.fastq")  into g26_20_reads0_g28_15
+ set val(name), file("out*")  into g26_20_logFile1_g53_0
 
 script:
 field = params.split_sequences_split_seq.field
 num = params.split_sequences_split_seq.num
+
+readArray = reads.toString().split(' ')	
+
+if(mate=="pair"){
+	R1 = readArray.grep(~/.*R1.*/)[0]
+	R2 = readArray.grep(~/.*R2.*/)[0]
+}else{
+	R1 = readArray[0]
+}
+
+readArray = reads.toString()
 
 if(num!=0){
 	num = " --num ${num}"
@@ -653,7 +1407,7 @@ if(num!=0){
 }
 
 """
-SplitSeq.py group -s ${reads} -f ${field} ${num}
+SplitSeq.py group -s ${readArray} -f ${field} ${num} >> out_${R1}_SS.log
 """
 
 }
@@ -664,35 +1418,164 @@ process Parse_header_table_parse_headers {
 publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*${out}$/) "parse_header_table/$filename"}
 input:
  set val(name), file(reads) from g26_20_reads0_g28_15
+ val mate from g_3_mate_g28_15
 
 output:
  set val(name),file("*${out}")  into g28_15_reads00
+ set val(name),file("out*")  into g28_15_logFile1_g53_0
 
 script:
 method = params.Parse_header_table_parse_headers.method
 act = params.Parse_header_table_parse_headers.act
 args = params.Parse_header_table_parse_headers.args
 
-out="_reheader.fastq"
+"""
+echo ${name}
+"""
+
+readArray = reads.toString().split(' ')	
+if(mate=="pair"){
+	R1 = readArray.grep(~/.*R1.*/)[0]
+	R2 = readArray.grep(~/.*R2.*/)[0]
+}else{
+	R1 = readArray[0]
+}
+
+
 if(method=="collapse" || method=="add" || method=="copy" || method=="rename" || method=="merge"){
+	out="_reheader.fastq"
 	"""
-	ParseHeaders.py  ${method} -s ${reads} ${args} --act ${act}
+	ParseHeaders.py  ${method} -s ${reads} ${args} --act ${act} >> out_${R1}_PH.log
 	"""
 }else{
 	if(method=="table"){
 			out=".tab"
 			"""
-			ParseHeaders.py ${method} -s ${reads} -o ${name}.tab ${args}
+			ParseHeaders.py ${method} -s ${reads} ${args} >> out_${R1}_PH.log
 			"""	
 	}else{
+		out="_reheader.fastq"
 		"""
-		ParseHeaders.py ${method} -s ${reads} ${args}
+		ParseHeaders.py ${method} -s ${reads} ${args} >> out_${R1}_PH.log
 		"""		
 	}
 }
 
 
+}
 
+
+process make_report_pipeline_cat_all_file {
+
+input:
+ set val(name), file(log_file) from g36_12_logFile3_g53_0
+ set val(name), file(log_file) from g0_0_logFile3_g53_0
+ set val(name), file(log_file) from g38_11_logFile3_g53_0
+ set val(name), file(log_file) from g47_11_logFile3_g53_0
+ set val(name), file(log_file) from g22_16_logFile4_g53_0
+ set val(name), file(log_file) from g26_20_logFile1_g53_0
+ set val(name), file(log_file) from g28_15_logFile1_g53_0
+
+output:
+ set val(name), file("all_out_file.log")  into g53_0_logFile0_g53_2
+
+script:
+readArray = log_file.toString()
+
+"""
+
+echo $readArray
+cat out* >> all_out_file.log
+"""
+
+}
+
+
+process make_report_pipeline_report_pipeline {
+
+input:
+ set val(name), file(log_files) from g53_0_logFile0_g53_2
+
+output:
+ file "*.rmd"  into g53_2_rMarkdown0_g53_1
+
+
+shell:
+
+readArray = log_files.toString().split(' ')
+R1 = readArray[0]
+
+'''
+#!/usr/bin/env perl
+
+
+my $script = <<'EOF';
+
+
+```{r, message=FALSE, echo=FALSE, results="hide"}
+# Setup
+library(prestor)
+library(knitr)
+library(captioner)
+
+plot_titles <- c("Read 1", "Read 2")
+if (!exists("tables")) { tables <- captioner(prefix="Table") }
+if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+tables("count", 
+       "The count of reads that passed and failed each processing step.")
+figures("steps", 
+        paste("The number of reads or read sets retained at each processing step. 
+               Shown as raw counts (top) and percentages of input from the previous 
+               step (bottom). Steps having more than one column display individual values for", 
+              plot_titles[1], "(first column) and", plot_titles[2], "(second column)."))
+```
+
+```{r, echo=FALSE}
+console_log <- loadConsoleLog(file.path(".","!{R1}"))
+```
+
+# Summary of Processing Steps
+
+```{r, echo=FALSE}
+count_df <- plotConsoleLog(console_log, sizing="figure")
+```
+
+`r figures("steps")`
+
+```{r, echo=FALSE}
+kable(count_df[c("step", "task", "total", "pass", "fail")],
+      col.names=c("Step", "Task", "Input", "Passed", "Failed"),
+      digits=3)
+```
+
+`r tables("count")`
+
+
+EOF
+	
+open OUT, ">!{name}.rmd";
+print OUT $script;
+close OUT;
+
+'''
+}
+
+
+process make_report_pipeline_render_rmarkdown {
+
+input:
+ file rmk from g53_2_rMarkdown0_g53_1
+
+output:
+ file "*.html"  into g53_1_outputFileHTML00
+
+"""
+
+#!/usr/bin/env Rscript 
+
+rmarkdown::render("${rmk}", clean=TRUE, output_format="html_document", output_dir=".")
+
+"""
 }
 
 

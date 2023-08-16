@@ -1,72 +1,63 @@
-**A pipeline for BCR repertoire libraries from the form of - Illumina MiSeq 2x250 BCR mRNA. that were produced in the same fashion as those in [Greiff et al. 2014](https://bmcimmunol.biomedcentral.com/articles/10.1186/s12865-014-0040-5)**
+A pipeline for BCR repertoire libraries from the form of - Illumina MiSeq 2x250 BCR mRNA. that were produced in the same fashion as those in [Greiff et al. 2014](https://bmcimmunol.biomedcentral.com/articles/10.1186/s12865-014-0040-5)
 
-<u>Sequence library:</u>
+Library preperation and sequencing method:
 
-The sequences were amplified using CPrimers and VPrimers. They were sequences with Illumins MiSeq 2x250. 
+The sequences were amplified using specific primers of the C-region and non coding V region of the IGH chain. The generated libraries were then sequenced with Illumins MiSeq 2x250. 
 
 Each 250 base-pair read was sequenced from one end of the target cDNA, so that the two reads together cover the entire variable region of the Ig heavy chain. The V(D)J reading frame proceeds from the start of read 2 to the start of read 1. Read 1 is in the opposite orientation (reverse complement), and contains the C-region primer sequence. Both reads begin with a random sequences of 4 nucleotides.
 
 
-<u>Input files:</u>
+Input files:
 
-1. The read can downloaded from the EBI European Nucleotide Archive under accession ID: ERP003950 or from SRA accession: SRR1383456
-2. The primers sequences available online at the table below.
+1. Two fastq file of paird sequencing
+2. primer files
 
-<u>Output files:</u>
+To test the pipeline:
 
-1. sample_collapse-unique.fastq
-2. sample_atleast-2.fastq
-3. log and log tab file for each step.
+We recommend to test the pipeline using a small example from the original reads that can download using the fastq-dump command.
 
-<u>Sequence processing:</u>
+```bash
+fastq-dump --split-files -X 25000 ERR346600
+```
+
+And upload directly to dolphinnext. 
+
+
+Output files:
+
+1. {sampleName}_collapse-unique.fastq
+2. {sampleName}_atleast-2.fastq
+3. log tab file for each steps
+4. report for some of the steps
+
+
+Pipeline container:
+
+* Docker: immcantation/suite:4.3.0
+
+Sequence processing steps:
 
 * Paired-end assembly
 
-	1. AssemblePairs align
+	1. AssemblePairs
+
 * Quality control and primer annotation
 
-	2. FilterSeq quality
-	2. MaskPrimer score
+	2. FilterSeq
+	3. MaskPrimer
+
+
 * Deduplication and filtering
 
-	3. CollapseSeq
-	4. SplitSeq group
+	4. CollapseSeq
+	5. SplitSeq
 
 
 
+Primers used:
+
+* [Greiff2014_CPrimers (R1)](https://bitbucket.org/kleinstein/presto/src/master/examples/Greiff2014/Greiff2014_CPrimers.fasta)
 
 
-**CPrimers**
-
-| Header     | Primer |
-| ----------- | ----------- |
-| IGHG   | CARKGGATRRRCHGATGGGG       |
-
-
-
-
-**VPrimers**
-
-| Header     | Primer |
-| ----------- | ----------- |
-| VH-FW1   | GAKGTRMAGCTTCAGGAGTC    |
-| VH-FW2   | GAGGTBCAGCTBCAGCAGTC    |
-| VH-FW3   | CAGGTGCAGCTGAAGSASTC    |
-| VH-FW4   | GAGGTCCARCTGCAACARTC    |
-| VH-FW5   | CAGGTYCAGCTBCAGCARTC    |
-| VH-FW6   | CAGGTYCARCTGCAGCAGTC    |
-| VH-FW7   | CAGGTCCACGTGAAGCAGTC    |
-| VH-FW8   | GAGGTGAASSTGGTGGAATC      |
-| VH-FW9   | GAVGTGAWGYTGGTGGAGTC      |
-| VH-FW10  | GAGGTGCAGSKGGTGGAGTC      |
-| VH-FW11   | GAKGTGCAMCTGGTGGAGTC      |
-| VH-FW12   | GAGGTGAAGCTGATGGARTC      |
-| VH-FW13   | GAGGTGCARCTTGTTGAGTC      |
-| VH-FW14   | GARGTRAAGCTTCTCGAGTC      |
-| VH-FW15   | GAAGTGAARSTTGAGGAGTC      |
-| VH-FW16   | CAGGTTACTCTRAAAGWGTSTG    |
-| VH-FW17   | CAGGTCCAACTVCAGCARCC      |
-| VH-FW18   | GATGTGAACTTGGAAGTGTC      |
-| VH-FW19	| GAGGTGAAGGTCATCGAGTC		|
-
+* [Greiff2014_VPrimers (R2)](https://bitbucket.org/kleinstein/presto/src/master/examples/Greiff2014/Greiff2014_VPrimers.fasta)
 
