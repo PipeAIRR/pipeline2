@@ -21,12 +21,6 @@ if ($HOSTNAME == "default"){
 }
 
 //* platform
-if ($HOSTNAME == "ig03.lnx.biu.ac.il"){
-    $DOCKER_IMAGE = "immcantation/suite:4.3.0"
-    $DOCKER_OPTIONS = "-v /work:/work"
-	$CPU  = 48
-    $MEMORY = 300 
-}
 //* platform
 
 
@@ -131,26 +125,26 @@ if (params.reads){
 Channel
 	.fromFilePairs( params.reads , size: params.mate == "single" ? 1 : params.mate == "pair" ? 2 : params.mate == "triple" ? 3 : params.mate == "quadruple" ? 4 : -1 )
 	.ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
-	.set{g_2_reads_g36_12}
+	.set{g_2_0_g54_12}
  } else {  
-	g_2_reads_g36_12 = Channel.empty()
+	g_2_0_g54_12 = Channel.empty()
  }
 
-Channel.value(params.mate).into{g_3_mate_g0_7;g_3_mate_g0_5;g_3_mate_g0_0;g_3_mate_g36_15;g_3_mate_g36_19;g_3_mate_g36_12;g_3_mate_g22_16;g_3_mate_g26_20;g_3_mate_g28_15;g_3_mate_g38_9;g_3_mate_g38_12;g_3_mate_g38_11;g_3_mate_g47_9;g_3_mate_g47_12;g_3_mate_g47_11}
-Channel.value(params.mate_ap).into{g_39_mate_g36_15;g_39_mate_g36_19;g_39_mate_g36_12}
+Channel.value(params.mate).into{g_3_1_g54_12;g_3_1_g54_15;g_3_1_g54_19;g_3_1_g55_0;g_3_1_g55_5;g_3_0_g55_7;g_3_0_g38_9;g_3_1_g38_12;g_3_0_g38_11;g_3_0_g47_9;g_3_1_g47_12;g_3_0_g47_11;g_3_1_g22_16;g_3_1_g26_20;g_3_1_g28_15}
+Channel.value(params.mate_ap).into{g_39_1_g54_12;g_39_1_g54_15;g_39_1_g54_19}
 
 
 process Assemble_pairs_assemble_pairs {
 
 input:
- set val(name),file(reads) from g_2_reads_g36_12
- val mate from g_39_mate_g36_12
+ set val(name),file(reads) from g_2_0_g54_12
+ val mate from g_39_1_g54_12
 
 output:
- set val(name),file("*_assemble-pass.f*")  into g36_12_reads0_g0_0
- set val(name),file("AP_*")  into g36_12_logFile1_g36_15
- set val(name),file("*_assemble-fail.f*") optional true  into g36_12_reads_failed22
- set val(name),file("out*")  into g36_12_logFile3_g53_0
+ set val(name),file("*_assemble-pass.f*")  into g54_12_reads00_g55_0
+ set val(name),file("AP_*")  into g54_12_logFile10_g54_15
+ set val(name),file("*_assemble-fail.f*") optional true  into g54_12_reads_failed22
+ set val(name),file("out*")  into g54_12_logFile30_g53_0
 
 script:
 method = params.Assemble_pairs_assemble_pairs.method
@@ -176,6 +170,7 @@ aligner = params.Assemble_pairs_assemble_pairs.aligner
 gap = params.Assemble_pairs_assemble_pairs.gap
 usearch_version = params.Assemble_pairs_assemble_pairs.usearch_version
 assemble_reference = params.Assemble_pairs_assemble_pairs.assemble_reference
+head_seqeunce_file = params.Assemble_pairs_assemble_pairs.head_seqeunce_file
 //* @style @condition:{method="align",alpha,maxerror,minlen,maxlen,scanrev}, {method="sequential",alpha,maxerror,minlen,maxlen,scanrev,ref_file,minident,evalue,maxhits,fill,aligner,align_exec,dbexec} {method="reference",ref_file,minident,evalue,maxhits,fill,aligner,align_exec,dbexec} {method="join",gap} @multicolumn:{method,coord,rc,head_fields_R1,head_fields_R2,failed,nrpoc,usearch_version},{alpha,maxerror,minlen,maxlen,scanrev}, {ref_file,minident,evalue,maxhits,fill,aligner,align_exec,dbexec}, {gap} 
 
 // args
@@ -219,8 +214,16 @@ readArray = reads.toString().split(' ')
 
 
 if(mate=="pair"){
-	R1 = readArray.grep(~/.*R1.*/)[0]
-	R2 = readArray.grep(~/.*R2.*/)[0]
+	R1 = readArray[0]
+	R2 = readArray[1]
+	
+	if(R1.contains("."+head_seqeunce_file)){
+		R1 = readArray[0]
+		R2 = readArray[1]
+	}else{
+		R2 = readArray[0]
+		R1 = readArray[1]
+	}
 	
 	"""
 	if [ "${method}" != "align" ]; then
@@ -239,13 +242,8 @@ if(mate=="pair"){
 		align_exec=""
 		dbexec=""
 	fi
-	
-	echo \$align_exec
-	echo \$dbexec
-	
-	
-	
-	AssemblePairs.py ${method} -1 ${R1} -2 ${R2} ${coord} ${rc} ${head_fields_R1} ${head_fields_R2} ${args} \$align_exec \$dbexec ${fasta} ${failed} --log AP_${name}.log ${nproc} >> out_${R1}_AP.log
+
+	AssemblePairs.py ${method} -1 ${R1} -2 ${R2} ${coord} ${rc} ${head_fields_R1} ${head_fields_R2} ${args} \$align_exec \$dbexec ${fasta} ${failed} --log AP_${name}.log ${nproc}  2>&1 | tee out_${R1}_AP.log
 	"""
 
 }else{
@@ -258,238 +256,15 @@ if(mate=="pair"){
 }
 
 
-process Filter_Sequence_Quality_filter_seq_quality {
-
-input:
- set val(name),file(reads) from g36_12_reads0_g0_0
- val mate from g_3_mate_g0_0
-
-output:
- set val(name), file("*_${method}-pass.fastq")  into g0_0_reads0_g38_11
- set val(name), file("FS_*")  into g0_0_logFile1_g0_5
- set val(name), file("*_${method}-fail.fastq") optional true  into g0_0_reads22
- set val(name),file("out*") optional true  into g0_0_logFile3_g53_0
-
-script:
-method = params.Filter_Sequence_Quality_filter_seq_quality.method
-nproc = params.Filter_Sequence_Quality_filter_seq_quality.nproc
-q = params.Filter_Sequence_Quality_filter_seq_quality.q
-n_length = params.Filter_Sequence_Quality_filter_seq_quality.n_length
-n_missing = params.Filter_Sequence_Quality_filter_seq_quality.n_missing
-//* @style @condition:{method="quality",q}, {method="length",n_length}, {method="missing",n_missing} @multicolumn:{method,nproc}
-
-if(method=="quality"){
-	q = "-q ${q}"
-	n_length = ""
-	n_missing = ""
-}else{
-	if(method=="length"){
-		q = ""
-		n_length = "-n ${n_length}"
-		n_missing = ""
-	}else{
-		q = ""
-		n_length = ""
-		n_missing = "-n ${n_missing}"
-	}
-}
-
-readArray = reads.toString().split(' ')	
-
-
-if(mate=="pair"){
-	R1 = readArray.grep(~/.*R1.*/)[0]
-	R2 = readArray.grep(~/.*R2.*/)[0]
-	"""
-	FilterSeq.py ${method} -s $R1 ${q} ${n_length} ${n_missing} --nproc ${nproc} --log FS_R1_${name}.log --failed >> out_${R1}_FS.log
-	FilterSeq.py ${method} -s $R2 ${q} ${n_length} ${n_missing} --nproc ${nproc} --log FS_R2_${name}.log --failed >> out_${R1}_FS.log
-	"""
-}else{
-	R1 = readArray[0]
-	"""
-	FilterSeq.py ${method} -s $R1 ${q} ${n_length} ${n_missing} --nproc ${nproc} --log FS_${name}.log --failed >> out_${R1}_FS.log
-	"""
-}
-
-
-}
-
-
-process Filter_Sequence_Quality_parse_log_FS {
-
-publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.tab$/) "FS_log_table/$filename"}
-input:
- set val(name), file(log_file) from g0_0_logFile1_g0_5
- val mate from g_3_mate_g0_5
-
-output:
- set val(name), file("*.tab")  into g0_5_logFile0_g0_7
-
-script:
-readArray = log_file.toString()
-
-"""
-ParseLog.py -l ${readArray}  -f ID QUALITY
-"""
-
-}
-
-
-process Filter_Sequence_Quality_report_filter_Seq_Quality {
-
-input:
- val matee from g_3_mate_g0_7
- set val(name), file(log_files) from g0_5_logFile0_g0_7
-
-output:
- file "*.rmd"  into g0_7_rMarkdown0_g0_9
-
-
-shell:
-
-if(matee=="pair"){
-	readArray = log_files.toString().split(' ')	
-	R1 = readArray.grep(~/.*R1.*/)[0]
-	R2 = readArray.grep(~/.*R2.*/)[0]
-
-	'''
-	#!/usr/bin/env perl
-	
-	
-	my $script = <<'EOF';
-	
-	
-	
-	```{R, message=FALSE, echo=FALSE, results="hide"}
-	# Setup
-	library(prestor)
-	library(knitr)
-	library(captioner)
-	
-	plot_titles <- c("Read 1", "Read 2")
-	if (!exists("tables")) { tables <- captioner(prefix="Table") }
-	if (!exists("figures")) { figures <- captioner(prefix="Figure") }
-	figures("quality", 
-	        paste("Mean Phred quality scores for",  plot_titles[1], "(top) and", plot_titles[2], "(bottom).",
-	              "The dotted line indicates the average quality score under which reads were removed."))
-	```
-	
-	```{r, echo=FALSE}
-	quality_log_1 <- loadLogTable(file.path(".", "!{R1}"))
-	quality_log_2 <- loadLogTable(file.path(".", "!{R2}"))
-	```
-	
-	# Quality Scores
-	
-	Quality filtering is an essential step in most sequencing workflows. pRESTO’s
-	FilterSeq tool remove reads with low mean Phred quality scores. 
-	Phred quality scores are assigned to each nucleotide base call in automated 
-	sequencer traces. The quality score (`Q`) of a base call is logarithmically 
-	related to the probability that a base call is incorrect (`P`): 
-	$Q = -10 log_{10} P$. For example, a base call with `Q=30` is incorrectly 
-	assigned 1 in 1000 times. The most commonly used approach is to remove read 
-	with average `Q` below 20.
-	
-	```{r, echo=FALSE}
-	plotFilterSeq(quality_log_1, quality_log_2, titles=plot_titles, sizing="figure")
-	```
-	
-	`r figures("quality")`
-		
-	EOF
-	
-	open OUT, ">!{name}.rmd";
-	print OUT $script;
-	close OUT;
-	
-	'''
-
-}else{
-
-	readArray = log_files.toString().split(' ')
-	R1 = readArray[0]
-	
-	'''
-	#!/usr/bin/env perl
-	
-	
-	my $script = <<'EOF';
-	
-	
-	```{R, message=FALSE, echo=FALSE, results="hide"}
-	# Setup
-	library(prestor)
-	library(knitr)
-	library(captioner)
-	
-	plot_titles <- c("Read")#params$quality_titles
-	if (!exists("tables")) { tables <- captioner(prefix="Table") }
-	if (!exists("figures")) { figures <- captioner(prefix="Figure") }
-	figures("quality", 
-	        paste("Mean Phred quality scores for",  plot_titles[1],
-	              "The dotted line indicates the average quality score under which reads were removed."))
-	```
-	
-	```{r, echo=FALSE}
-	quality_log_1 <- loadLogTable(file.path(".", "!{R1}"))
-	```
-	
-	# Quality Scores
-	
-	Quality filtering is an essential step in most sequencing workflows. pRESTO’s
-	FilterSeq tool remove reads with low mean Phred quality scores. 
-	Phred quality scores are assigned to each nucleotide base call in automated 
-	sequencer traces. The quality score (`Q`) of a base call is logarithmically 
-	related to the probability that a base call is incorrect (`P`): 
-	$Q = -10 log_{10} P$. For example, a base call with `Q=30` is incorrectly 
-	assigned 1 in 1000 times. The most commonly used approach is to remove read 
-	with average `Q` below 20.
-	
-	```{r, echo=FALSE}
-	plotFilterSeq(quality_log_1, titles=plot_titles[1], sizing="figure")
-	```
-	
-	`r figures("quality")`
-	
-	EOF
-	
-	open OUT, ">!{name}.rmd";
-	print OUT $script;
-	close OUT;
-	
-	'''
-}
-}
-
-
-process Filter_Sequence_Quality_render_rmarkdown {
-
-publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.html$/) "FSQ_report/$filename"}
-input:
- file rmk from g0_7_rMarkdown0_g0_9
-
-output:
- file "*.html"  into g0_9_outputFileHTML00
-
-"""
-
-#!/usr/bin/env Rscript 
-
-rmarkdown::render("${rmk}", clean=TRUE, output_format="html_document", output_dir=".")
-
-"""
-}
-
-
 process Assemble_pairs_parse_log_AP {
 
-publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.tab$/) "AP_log_table/$filename"}
+publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*table.tab$/) "AP_log_table/$filename"}
 input:
- set val(name),file(log_file) from g36_12_logFile1_g36_15
- val mate from g_39_mate_g36_15
+ set val(name),file(log_file) from g54_12_logFile10_g54_15
+ val mate from g_39_1_g54_15
 
 output:
- set val(name),file("*.tab")  into g36_15_logFile0_g36_19
+ file "*table.tab"  into g54_15_logFile01_g54_25, g54_15_logFile00_g54_19
 
 script:
 field_to_parse = params.Assemble_pairs_parse_log_AP.field_to_parse
@@ -506,11 +281,11 @@ ParseLog.py -l ${readArray}  -f ${field_to_parse}
 process Assemble_pairs_report_assemble_pairs {
 
 input:
- set val(name),file(log_files) from g36_15_logFile0_g36_19
- val matee from g_39_mate_g36_19
+ file log_files from g54_15_logFile00_g54_19
+ val matee from g_39_1_g54_19
 
 output:
- file "*.rmd"  into g36_19_rMarkdown0_g36_22
+ file "*.rmd"  into g54_19_rMarkdown00_g54_25
 
 
 
@@ -519,6 +294,7 @@ shell:
 if(matee=="pair"){
 	readArray = log_files.toString().split(' ')
 	assemble = readArray[0]
+	name = assemble-"_table.tab"
 	'''
 	#!/usr/bin/env perl
 	
@@ -613,7 +389,7 @@ if(matee=="pair"){
 
 	EOF
 	
-	open OUT, ">!{name}.rmd";
+	open OUT, ">AP_!{name}.rmd";
 	print OUT $script;
 	close OUT;
 	
@@ -628,14 +404,16 @@ if(matee=="pair"){
 }
 
 
-process Assemble_pairs_render_rmarkdown {
+process Assemble_pairs_presto_render_rmarkdown {
 
 publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.html$/) "AP_report/$filename"}
 input:
- file rmk from g36_19_rMarkdown0_g36_22
+ file rmk from g54_19_rMarkdown00_g54_25
+ file log_file from g54_15_logFile01_g54_25
 
 output:
- file "*.html"  into g36_22_outputFileHTML00
+ file "*.html"  into g54_25_outputFileHTML00
+ file "*csv" optional true  into g54_25_csvFile11
 
 """
 
@@ -647,17 +425,76 @@ rmarkdown::render("${rmk}", clean=TRUE, output_format="html_document", output_di
 }
 
 
+process Filter_Sequence_Quality_filter_seq_quality {
+
+input:
+ set val(name),file(reads) from g54_12_reads00_g55_0
+ val mate from g_3_1_g55_0
+
+output:
+ set val(name), file("*_${method}-pass.fast*")  into g55_0_reads01_g38_11
+ set val(name), file("FS_*")  into g55_0_logFile10_g55_5
+ set val(name), file("*_${method}-fail.fast*") optional true  into g55_0_reads22
+ set val(name),file("out*") optional true  into g55_0_logFile30_g53_0
+
+script:
+method = params.Filter_Sequence_Quality_filter_seq_quality.method
+nproc = params.Filter_Sequence_Quality_filter_seq_quality.nproc
+q = params.Filter_Sequence_Quality_filter_seq_quality.q
+n_length = params.Filter_Sequence_Quality_filter_seq_quality.n_length
+n_missing = params.Filter_Sequence_Quality_filter_seq_quality.n_missing
+fasta = params.Filter_Sequence_Quality_filter_seq_quality.fasta
+//* @style @condition:{method="quality",q}, {method="length",n_length}, {method="missing",n_missing} @multicolumn:{method,nproc}
+
+if(method=="missing"){
+	q = ""
+	n_length = ""
+	n_missing = "-n ${n_missing}"
+}else{
+	if(method=="length"){
+		q = ""
+		n_length = "-n ${n_length}"
+		n_missing = ""
+	}else{
+		q = "-q ${q}"
+		n_length = ""
+		n_missing = ""
+	}
+}
+
+readArray = reads.toString().split(' ')	
+
+fasta = (fasta=="true") ? "--fasta" : ""
+
+if(mate=="pair"){
+	R1 = readArray[0]
+	R2 = readArray[1]
+	"""
+	FilterSeq.py ${method} -s $R1 ${q} ${n_length} ${n_missing} --nproc ${nproc} --log FS_R1_${name}.log --failed ${fasta} 2>&1 | tee -a out_${R1}_FS.log
+	FilterSeq.py ${method} -s $R2 ${q} ${n_length} ${n_missing} --nproc ${nproc} --log FS_R2_${name}.log --failed ${fasta} 2>&1 | tee -a out_${R1}_FS.log
+	"""
+}else{
+	R1 = readArray[0]
+	"""
+	FilterSeq.py ${method} -s $R1 ${q} ${n_length} ${n_missing} --nproc ${nproc} --log FS_${name}.log --failed ${fasta} 2>&1 | tee -a out_${R1}_FS.log
+	"""
+}
+
+
+}
+
+
 process Mask_Primer_v_MaskPrimers {
 
 input:
- val mate from g_3_mate_g38_11
- set val(name),file(reads) from g0_0_reads0_g38_11
+ val mate from g_3_0_g38_11
+ set val(name),file(reads) from g55_0_reads01_g38_11
 
 output:
- set val(name), file("*_primers-pass.fastq")  into g38_11_reads0_g47_11
+ set val(name), file("*_primers-pass.fastq")  into g38_11_reads01_g47_11
  set val(name), file("*_primers-fail.fastq") optional true  into g38_11_reads_failed11
- set val(name), file("MP_*")  into g38_11_logFile2_g38_9
- set val(name),file("out*")  into g38_11_logFile3_g53_0
+ set val(name), file("MP_*")  into g38_11_logFile21_g38_9
+ set val(name),file("out*")  into g38_11_logFile30_g53_0
 
 script:
 method = params.Mask_Primer_v_MaskPrimers.method
@@ -731,8 +568,8 @@ if(mate=="pair"){
   
 
 
-	R1 = readArray.grep(~/.*R1.*/)[0]
-	R2 = readArray.grep(~/.*R2.*/)[0]
+	R1 = readArray[0]
+	R2 = readArray[1]
 	
 	R1_primers = (method[0]=="extract") ? "" : "-p ${R1_primers}"
 	R2_primers = (method[1]=="extract") ? "" : "-p ${R2_primers}"
@@ -745,7 +582,7 @@ if(mate=="pair"){
 	"""
 }else{
 	args_1 = args_values[0]
-	println args_1
+	
 	R1_primers = (method[0]=="extract") ? "" : "-p ${R1_primers}"
 	
 	R1 = readArray[0]
@@ -764,11 +601,11 @@ process Mask_Primer_v_parse_log_MP {
 
 publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.tab$/) "MP_v_log_table/$filename"}
 input:
- val mate from g_3_mate_g38_9
- set val(name), file(log_file) from g38_11_logFile2_g38_9
+ val mate from g_3_0_g38_9
+ set val(name), file(log_file) from g38_11_logFile21_g38_9
 
 output:
- set val(name), file("*.tab")  into g38_9_logFile0_g38_12
+ set val(name), file("*.tab")  into g38_9_logFile00_g38_12
 
 script:
 readArray = log_file.toString()	
@@ -783,11 +620,11 @@ ParseLog.py -l ${readArray}  -f ID PRIMER BARCODE ERROR
 process Mask_Primer_v_try_report_maskprimer {
 
 input:
- set val(name), file(primers) from g38_9_logFile0_g38_12
- val matee from g_3_mate_g38_12
+ set val(name), file(primers) from g38_9_logFile00_g38_12
+ val matee from g_3_1_g38_12
 
 output:
- file "*.rmd"  into g38_12_rMarkdown0_g38_16
+ file "*.rmd"  into g38_12_rMarkdown00_g38_16
 
 
 shell:
@@ -972,7 +809,7 @@ process Mask_Primer_v_render_rmarkdown {
 
 publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.html$/) "MP_v_report/$filename"}
 input:
- file rmk from g38_12_rMarkdown0_g38_16
+ file rmk from g38_12_rMarkdown00_g38_16
 
 output:
  file "*.html"  into g38_16_outputFileHTML00
@@ -990,14 +827,14 @@ rmarkdown::render("${rmk}", clean=TRUE, output_format="html_document", output_di
 process Mask_Primer_MaskPrimers {
 
 input:
- val mate from g_3_mate_g47_11
- set val(name),file(reads) from g38_11_reads0_g47_11
+ val mate from g_3_0_g47_11
+ set val(name),file(reads) from g38_11_reads01_g47_11
 
 output:
- set val(name), file("*_primers-pass.fastq")  into g47_11_reads0_g22_16
+ set val(name), file("*_primers-pass.fastq")  into g47_11_reads00_g22_16
  set val(name), file("*_primers-fail.fastq") optional true  into g47_11_reads_failed11
- set val(name), file("MP_*")  into g47_11_logFile2_g47_9
- set val(name),file("out*")  into g47_11_logFile3_g53_0
+ set val(name), file("MP_*")  into g47_11_logFile21_g47_9
+ set val(name),file("out*")  into g47_11_logFile30_g53_0
 
 script:
 method = params.Mask_Primer_MaskPrimers.method
@@ -1071,8 +908,8 @@ if(mate=="pair"){
   
 
 
-	R1 = readArray.grep(~/.*R1.*/)[0]
-	R2 = readArray.grep(~/.*R2.*/)[0]
+	R1 = readArray[0]
+	R2 = readArray[1]
 	
 	R1_primers = (method[0]=="extract") ? "" : "-p ${R1_primers}"
 	R2_primers = (method[1]=="extract") ? "" : "-p ${R2_primers}"
@@ -1085,7 +922,7 @@ if(mate=="pair"){
 	"""
 }else{
 	args_1 = args_values[0]
-	println args_1
+	
 	R1_primers = (method[0]=="extract") ? "" : "-p ${R1_primers}"
 	
 	R1 = readArray[0]
@@ -1104,11 +941,11 @@ process Mask_Primer_parse_log_MP {
 
 publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.tab$/) "MP_c_log_table/$filename"}
 input:
- val mate from g_3_mate_g47_9
- set val(name), file(log_file) from g47_11_logFile2_g47_9
+ val mate from g_3_0_g47_9
+ set val(name), file(log_file) from g47_11_logFile21_g47_9
 
 output:
- set val(name), file("*.tab")  into g47_9_logFile0_g47_12
+ set val(name), file("*.tab")  into g47_9_logFile00_g47_12
 
 script:
 readArray = log_file.toString()	
@@ -1123,11 +960,11 @@ ParseLog.py -l ${readArray}  -f ID PRIMER BARCODE ERROR
 process Mask_Primer_try_report_maskprimer {
 
 input:
- set val(name), file(primers) from g47_9_logFile0_g47_12
- val matee from g_3_mate_g47_12
+ set val(name), file(primers) from g47_9_logFile00_g47_12
+ val matee from g_3_1_g47_12
 
 output:
- file "*.rmd"  into g47_12_rMarkdown0_g47_16
+ file "*.rmd"  into g47_12_rMarkdown00_g47_16
 
 
 shell:
@@ -1312,7 +1149,7 @@ process Mask_Primer_render_rmarkdown {
 
 publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.html$/) "MP_report/$filename"}
 input:
- file rmk from g47_12_rMarkdown0_g47_16
+ file rmk from g47_12_rMarkdown00_g47_16
 
 output:
  file "*.html"  into g47_16_outputFileHTML00
@@ -1331,15 +1168,15 @@ process collapse_sequences_collapse_seq {
 
 publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_collapse-unique.fast.*$/) "reads_unique/$filename"}
 input:
- set val(name), file(reads) from g47_11_reads0_g22_16
- val mate from g_3_mate_g22_16
+ set val(name), file(reads) from g47_11_reads00_g22_16
+ val mate from g_3_1_g22_16
 
 output:
- set val(name),  file("*_collapse-unique.fast*")  into g22_16_reads0_g26_20
+ set val(name),  file("*_collapse-unique.fast*")  into g22_16_reads00_g26_20
  set val(name),  file("*_collapse-duplicate.fast*") optional true  into g22_16_reads_duplicate11
  set val(name),  file("*_collapse-undetermined.fast*") optional true  into g22_16_reads_undetermined22
  file "CS_*"  into g22_16_logFile33
- set val(name),  file("out*")  into g22_16_logFile4_g53_0
+ set val(name),  file("out*")  into g22_16_logFile40_g53_0
 
 script:
 max_missing = params.collapse_sequences_collapse_seq.max_missing
@@ -1378,12 +1215,12 @@ process split_sequences_split_seq {
 
 publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_atleast-.*.fastq$/) "split_sequence_reads/$filename"}
 input:
- set val(name),file(reads) from g22_16_reads0_g26_20
- val mate from g_3_mate_g26_20
+ set val(name),file(reads) from g22_16_reads00_g26_20
+ val mate from g_3_1_g26_20
 
 output:
- set val(name), file("*_atleast-*.fastq")  into g26_20_reads0_g28_15
- set val(name), file("out*")  into g26_20_logFile1_g53_0
+ set val(name), file("*_atleast-*.fastq")  into g26_20_reads00_g28_15
+ set val(name), file("out*")  into g26_20_logFile10_g53_0
 
 script:
 field = params.split_sequences_split_seq.field
@@ -1417,12 +1254,12 @@ process Parse_header_table_parse_headers {
 
 publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*${out}$/) "parse_header_table/$filename"}
 input:
- set val(name), file(reads) from g26_20_reads0_g28_15
- val mate from g_3_mate_g28_15
+ set val(name), file(reads) from g26_20_reads00_g28_15
+ val mate from g_3_1_g28_15
 
 output:
  set val(name),file("*${out}")  into g28_15_reads00
- set val(name),file("out*")  into g28_15_logFile1_g53_0
+ set val(name),file("out*")  into g28_15_logFile10_g53_0
 
 script:
 method = params.Parse_header_table_parse_headers.method
@@ -1468,16 +1305,16 @@ if(method=="collapse" || method=="add" || method=="copy" || method=="rename" || 
 process make_report_pipeline_cat_all_file {
 
 input:
- set val(name), file(log_file) from g36_12_logFile3_g53_0
- set val(name), file(log_file) from g0_0_logFile3_g53_0
- set val(name), file(log_file) from g38_11_logFile3_g53_0
- set val(name), file(log_file) from g47_11_logFile3_g53_0
- set val(name), file(log_file) from g22_16_logFile4_g53_0
- set val(name), file(log_file) from g26_20_logFile1_g53_0
- set val(name), file(log_file) from g28_15_logFile1_g53_0
+ set val(name), file(log_file) from g28_15_logFile10_g53_0
+ set val(name), file(log_file) from g47_11_logFile30_g53_0
+ set val(name), file(log_file) from g22_16_logFile40_g53_0
+ set val(name), file(log_file) from g26_20_logFile10_g53_0
+ set val(name), file(log_file) from g38_11_logFile30_g53_0
+ set val(name), file(log_file) from g55_0_logFile30_g53_0
+ set val(name), file(log_file) from g54_12_logFile30_g53_0
 
 output:
- set val(name), file("all_out_file.log")  into g53_0_logFile0_g53_2
+ set val(name), file("all_out_file.log")  into g53_0_logFile00_g53_2
 
 script:
 readArray = log_file.toString()
@@ -1494,10 +1331,10 @@ cat out* >> all_out_file.log
 process make_report_pipeline_report_pipeline {
 
 input:
- set val(name), file(log_files) from g53_0_logFile0_g53_2
+ set val(name), file(log_files) from g53_0_logFile00_g53_2
 
 output:
- file "*.rmd"  into g53_2_rMarkdown0_g53_1
+ file "*.rmd"  into g53_2_rMarkdown00_g53_1
 
 
 shell:
@@ -1563,11 +1400,181 @@ close OUT;
 
 process make_report_pipeline_render_rmarkdown {
 
+publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.html$/) "pipeline_report/$filename"}
 input:
- file rmk from g53_2_rMarkdown0_g53_1
+ file rmk from g53_2_rMarkdown00_g53_1
 
 output:
  file "*.html"  into g53_1_outputFileHTML00
+
+"""
+
+#!/usr/bin/env Rscript 
+
+rmarkdown::render("${rmk}", clean=TRUE, output_format="html_document", output_dir=".")
+
+"""
+}
+
+
+process Filter_Sequence_Quality_parse_log_FS {
+
+publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*table.tab$/) "FS_log_table/$filename"}
+input:
+ set val(name), file(log_file) from g55_0_logFile10_g55_5
+ val mate from g_3_1_g55_5
+
+output:
+ file "*table.tab"  into g55_5_logFile01_g55_7, g55_5_logFile01_g55_16
+
+script:
+readArray = log_file.toString()
+
+"""
+ParseLog.py -l ${readArray}  -f ID QUALITY
+"""
+
+}
+
+
+process Filter_Sequence_Quality_report_filter_Seq_Quality {
+
+input:
+ val mate from g_3_0_g55_7
+ file log_files from g55_5_logFile01_g55_7
+
+output:
+ file "*.rmd"  into g55_7_rMarkdown00_g55_16
+
+
+shell:
+
+if(mate=="pair"){
+	readArray = log_files.toString().split(' ')	
+	R1 = readArray[0]
+	R2 = readArray[1]
+
+	name = R1 - "_table.tab"
+	'''
+	#!/usr/bin/env perl
+	
+	
+	my $script = <<'EOF';
+	
+	
+	
+	```{R, message=FALSE, echo=FALSE, results="hide"}
+	# Setup
+	library(prestor)
+	library(knitr)
+	library(captioner)
+	
+	plot_titles <- c("Read 1", "Read 2")
+	if (!exists("tables")) { tables <- captioner(prefix="Table") }
+	if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+	figures("quality", 
+	        paste("Mean Phred quality scores for",  plot_titles[1], "(top) and", plot_titles[2], "(bottom).",
+	              "The dotted line indicates the average quality score under which reads were removed."))
+	```
+	
+	```{r, echo=FALSE}
+	quality_log_1 <- loadLogTable(file.path(".", "!{R1}"))
+	quality_log_2 <- loadLogTable(file.path(".", "!{R2}"))
+	```
+	
+	# Quality Scores
+	
+	Quality filtering is an essential step in most sequencing workflows. pRESTO’s
+	FilterSeq tool remove reads with low mean Phred quality scores. 
+	Phred quality scores are assigned to each nucleotide base call in automated 
+	sequencer traces. The quality score (`Q`) of a base call is logarithmically 
+	related to the probability that a base call is incorrect (`P`): 
+	$Q = -10 log_{10} P$. For example, a base call with `Q=30` is incorrectly 
+	assigned 1 in 1000 times. The most commonly used approach is to remove read 
+	with average `Q` below 20.
+	
+	```{r, echo=FALSE}
+	plotFilterSeq(quality_log_1, quality_log_2, titles=plot_titles, sizing="figure")
+	```
+	
+	`r figures("quality")`
+		
+	EOF
+	
+	open OUT, ">FSQ_!{name}.rmd";
+	print OUT $script;
+	close OUT;
+	
+	'''
+
+}else{
+
+	readArray = log_files.toString().split(' ')
+	R1 = readArray[0]
+	name = R1 - "_table.tab"
+	'''
+	#!/usr/bin/env perl
+	
+	
+	my $script = <<'EOF';
+	
+	
+	```{R, message=FALSE, echo=FALSE, results="hide"}
+	# Setup
+	library(prestor)
+	library(knitr)
+	library(captioner)
+	
+	plot_titles <- c("Read")#params$quality_titles
+	if (!exists("tables")) { tables <- captioner(prefix="Table") }
+	if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+	figures("quality", 
+	        paste("Mean Phred quality scores for",  plot_titles[1],
+	              "The dotted line indicates the average quality score under which reads were removed."))
+	```
+	
+	```{r, echo=FALSE}
+	quality_log_1 <- loadLogTable(file.path(".", "!{R1}"))
+	```
+	
+	# Quality Scores
+	
+	Quality filtering is an essential step in most sequencing workflows. pRESTO’s
+	FilterSeq tool remove reads with low mean Phred quality scores. 
+	Phred quality scores are assigned to each nucleotide base call in automated 
+	sequencer traces. The quality score (`Q`) of a base call is logarithmically 
+	related to the probability that a base call is incorrect (`P`): 
+	$Q = -10 log_{10} P$. For example, a base call with `Q=30` is incorrectly 
+	assigned 1 in 1000 times. The most commonly used approach is to remove read 
+	with average `Q` below 20.
+	
+	```{r, echo=FALSE}
+	plotFilterSeq(quality_log_1, titles=plot_titles[1], sizing="figure")
+	```
+	
+	`r figures("quality")`
+	
+	EOF
+	
+	open OUT, ">FSQ_!{name}.rmd";
+	print OUT $script;
+	close OUT;
+	
+	'''
+}
+}
+
+
+process Filter_Sequence_Quality_presto_render_rmarkdown {
+
+publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.html$/) "FSQ_report/$filename"}
+input:
+ file rmk from g55_7_rMarkdown00_g55_16
+ file log_file from g55_5_logFile01_g55_16
+
+output:
+ file "*.html"  into g55_16_outputFileHTML00
+ file "*csv" optional true  into g55_16_csvFile11
 
 """
 
